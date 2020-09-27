@@ -31,6 +31,6 @@ void RigidBodySpring::updateForce(RigidBody * affectedBody, const real timeDelta
 	//calculate the magnitude of the force 
 	real springMag = k * (spring.mag() - restLength);
 
-	affectedBody->addForceAtBodyPoint(
+	affectedBody->addWorldForceAtLocalPoint(
 		springMag * spring.norm(), attachmentPoint);
 }

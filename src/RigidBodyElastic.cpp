@@ -34,5 +34,5 @@ void RigidBodyElastic::updateForce(RigidBody *affectedBody, const real timeDelta
 	//do nothing if there is no extension
 	if (springMag < 0) return;
 
-	affectedBody->addForceAtBodyPoint(springMag * spring.norm(), attachmentPoint);
+	affectedBody->addWorldForceAtLocalPoint(springMag * spring.norm(), attachmentPoint);
 }

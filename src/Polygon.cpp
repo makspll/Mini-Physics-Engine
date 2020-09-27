@@ -112,7 +112,6 @@ void Polygon::calculateMassData(
 	MassData	&destMassData,
 	real		density)
 {
-	real area = 0.0f;
 	real inertia = 0.0f;
 	real mass = 0.0f;
 
@@ -132,40 +131,38 @@ void Polygon::calculateMassData(
 		int j = (i + 1) % vCount;
 
 		//shift the origin to whole polygons centroid
-		Vec2d Pn = vertices[i] - centroid; //Pn
-		Vec2d P1 = vertices[j] - centroid; //P1
+		Vec2d Pn = centroid - vertices[i]; //Pn
+		Vec2d P1 = centroid - vertices[j]; //P1
 
 		//area/mass of the individual triangle
 		real DoubleTriangleArea = fabs(Pn.Cross(P1));
-		//accumulate
-		area += DoubleTriangleArea*(1.0f/2.0f);
 
-		real triangleMass = density * DoubleTriangleArea*(1.0f/2.0f);
+		//calculate mass from area density
+		real triangleMass = density * (DoubleTriangleArea/2.0f);
+
 		mass += triangleMass;
 
-		//find individual triangle's centroid
-		Vec2d triangleCentroid = Vec2d(
-			vertices[i].x() + vertices[j].x() + centroid.x(),
-			vertices[i].y() + vertices[j].y() + centroid.y());
-		triangleCentroid = triangleCentroid * (1.0f / 3.0f);
+		// calculate inertia of the triangle around for rotation around centroid
+		// Izz = Ixx + Iyy = mass * (A.sqrLength() + B.sqrLength() + A.dot(B)) / 6
+		// for triangle with sides A B rotated around the centroid of the whole shape
+		// source: https://www.codeproject.com/Articles/1215961/Making-a-D-Physics-Engine-Mass-Inertia-and-Forces
+		real inertialTriangle = (triangleMass 
+								* (Pn.squareMag() + P1.squareMag() + (P1*Pn))) 
+									/ 6 ;
+		std::cout <<inertialTriangle << '\n';
 
-		real In = (density / 12.0f) *	 // rho/12
-			DoubleTriangleArea *	     // ||(Pn+1 x Pn)||
-			(P1.y() + (P1*Pn) + Pn.y()); // (Pn+1.y + (Pn+1 dot Pn) + Pn.y)
-
-		inertia += In;
+		//now parallel axis theorem to compensate for shape
+		//not being at centroid e.g. I = Io + m*||centroid||
+		//inertia += mass * centroid.squareMag(); 
+		inertia += inertialTriangle + triangleMass * centroid.mag();
 	}
-
-	//now parallel axis theorem to compensate for shape
-	//not being at centroid e.g. I = Io + m*||centroid||
-	//inertia += mass * centroid.squareMag(); 
 
 	destMassData.inverseMass = 1.0f / mass;
 
 	if (inertia > 0.0f)
 		destMassData.inverseInertia = 1.0f / inertia;
 	else
-		destMassData.inverseInertia = 0.0f;
+		destMassData.inverseInertia = INFINITY;
 
 	destMassData.centroid = centroid;
 
@@ -203,7 +200,7 @@ void Polygon::calculateCentroid()
 
 	centroid = Vec2d(xPos, yPos);
 
-	centroid *= 1.0f/vCount;
+	centroid /= vCount;
 
 }
 

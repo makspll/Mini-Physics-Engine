@@ -324,10 +324,15 @@ namespace phy {
 	class Mat3x3
 	{
 	public:
+		friend std::ostream& operator<<(std::ostream& os, const Mat3x3& vec);
+
 		/*
 		
 		*/
 		Mat3x3() {}
+
+				
+
 		/*
 		get inverse of this matrix
 		*/
@@ -356,6 +361,7 @@ namespace phy {
 			mat = matrix;
 			assert(mat.row(3)[0] == mat.row(3)[1] == 0 && mat.row(3)[3] == 1);
 		}
+
 
 		/*
 		left multiply the matrix by vector as an affine transformation

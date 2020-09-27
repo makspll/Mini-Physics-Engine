@@ -46,7 +46,7 @@ void RigidBody::integrate(real timeDelta)
 
 	//keep in mind acceleration  from forces is kept separate from 
 	//inherent acceleration on object
-	//we don't add add acceleration and then clear it, 
+	//we don't add acceleration and then clear it, 
 	//we just clear forces instead 
 
 	// linear
@@ -64,9 +64,10 @@ void RigidBody::integrate(real timeDelta)
 	angVel += (angAcc + (torqueAccum * inverseInertia) ) * timeDelta;
 
 
-	// impose drag (temporary, will be replaced with game mechanics)
-	//vel = vel * powf(linearDamping,timeDelta);
-	//angVel = angVel * powf(angularDamping,timeDelta);
+	// impose drag (temporary)
+	vel = vel * powf(linearDamping,timeDelta);
+	angVel = angVel * powf(angularDamping,timeDelta);
+
 
 	//clear all forces
 	clearForceAccumulators();
@@ -75,7 +76,7 @@ void RigidBody::integrate(real timeDelta)
 	calculateDerivedData();
 }
 
-void RigidBody::createFixture(Fixture * fixture)
+void RigidBody::attachFixture(Fixture * fixture)
 {
 	fixtures.push_back(fixture);
 	recalculateMassData();
@@ -110,18 +111,27 @@ void RigidBody::recalculateMassData()
 	inverseMass = 0.0f;
 	inverseInertia = 0.0f;
 
+	// calculate mass first
 	for (int i = 0; i < fixtures.size(); i++)
 	{
 		inverseMass += fixtures[i]->getInvMass();
 
+		averageCoM += fixtures[i]->getCentroid();
+	}
+	centreOfMass = averageCoM /fixtures.size();
+
+	for (int i = 0; i < fixtures.size();i++)
+	{
+		std::cout << fixtures[i]->getInertia();
+
 		//the inertia needs to apply parallel axis theorem too
-		inverseInertia += fixtures[i]->getInvInertia() + 
+		inverseInertia += fixtures[i]->getInertia() + 
 						  (fixtures[i]->getMass() * 
 							(fixtures[i]->getCentroid() - centreOfMass).squareMag());
 
-		averageCoM += fixtures[i]->getCentroid();
 	}
-	centreOfMass = averageCoM * (1.0f/fixtures.size());
+
+	inverseInertia = 1.0f/inverseInertia;
 }
 
 void RigidBody::addForce(const Vec2d & worldForce)
@@ -131,31 +141,32 @@ void RigidBody::addForce(const Vec2d & worldForce)
 	isAwake = true;
 }
 
-void RigidBody::addForceAtPoint(
+void RigidBody::addWorldForceAtWorldPoint(
 	const Vec2d &worldForce, 
 	const Vec2d &worldPoint)
 {
-	//convert from world point to local point from centre of mass
-	Vec2d vectorOffset = worldPoint - (pos + centreOfMass);
 
 	//with local body point just use the other function
-	addForceAtBodyPoint(worldForce, vectorOffset);
-	isAwake = true;
+	addWorldForceAtLocalPoint(transform.getInverse().transform(worldPoint), transform.transformDirInverse(worldForce));
 
+	// also add a torque
+	
+	isAwake = true;
 }
 
-void RigidBody::addForceAtBodyPoint(
+void RigidBody::addWorldForceAtLocalPoint(
 	const Vec2d &worldForce, 
 	const Vec2d &localPoint)
 {
+	//https://gamedev.net/forums/topic/592775-3d-rigid-body-how-to-apply-force-at-offset/4758043/
 
 	//torque in 2d is the 3d vector pointing out 
 	//so a 2d cross product gives it's magnitude
-	torqueAccum += localPoint.Cross(worldForce);
+
+	torqueAccum += localPoint.Cross(worldForce); 
 
 	//now this feels wrong, 
-	//NEEDS TO BE LOOKED AT 
-	forceAccum += worldForce;
+	forceAccum +=  worldForce;
 	isAwake = true;
 }
 

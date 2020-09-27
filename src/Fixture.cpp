@@ -43,7 +43,7 @@ std::vector<Vec2d> phy::Fixture::getVerts(const Mat3x3 & transform) const
 
 std::ostream& phy::operator<<(std::ostream& os, const Fixture& fix)
 {
-	os << '/n' << "Mass:" << std::setprecision(3) <<
+	os << '\n' << "Mass:" << std::setprecision(3) <<
 		fix.getMass() <<
 		" Inertia: " << std::setprecision(3) <<
 		fix.getInertia() <<

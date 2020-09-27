@@ -15,7 +15,10 @@ Vec2d  Vec2d::toLocal(const Mat3x3& transform)
 }
 
 
-
+std::ostream& phy::operator<< (std::ostream& os, const Mat3x3& body)
+{
+	return os;
+}
 
 Mat3x3 Mat3x3::getInverse() const
 {
@@ -33,12 +36,12 @@ Vec2d Mat3x3::transform(const Vec2d& vector) const
 Vec2d Mat3x3::transformDir(const Vec2d& dir) const
 {
 	//extract rotation matrix and transform the dir vector
-	return Vec2d(mat.submat(0, 1, 1, 1) * dir.vec);
+	return Vec2d(mat.submat(0, 0, 1, 1) * dir.vec);
 }
 
 Vec2d Mat3x3::transformDirInverse(const Vec2d& dir) const
 {
 	//extract rotation matrix, invert it and transform the dir vector
-	return Vec2d(mat.submat(0, 1, 1, 1).i() * dir.vec);
+	return Vec2d(mat.submat(0, 0, 1, 1).i() * dir.vec);
 }
 

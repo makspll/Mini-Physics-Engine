@@ -26,7 +26,7 @@ namespace phy {
 		/*
 		attach an existing fixture to this body
 		*/
-		void createFixture(Fixture * fixture);
+		void attachFixture(Fixture * fixture);
 
 		/*
 		add a new fixture to the body
@@ -51,12 +51,12 @@ namespace phy {
 		/*
 		apply a force at a point expressed in world coordinates
 		*/
-		void addForceAtPoint(const Vec2d & worldForce, const Vec2d & worldPoint);
+		void addWorldForceAtWorldPoint(const Vec2d & worldForce, const Vec2d & worldPoint);
 		
 		/*
 		apply a force at a point expressed in local coordinates relative to CoM
 		*/
-		void addForceAtBodyPoint(const Vec2d & worldForce, const Vec2d & localPoint);
+		void addWorldForceAtLocalPoint(const Vec2d & worldForce, const Vec2d & localPoint);
 		
 		/*
 		transform a point from local space to world space

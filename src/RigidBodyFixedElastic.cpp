@@ -31,5 +31,5 @@ void RigidBodyFixedElastic::updateForce(
 	//do nothing if no extension
 	if (springMag < 0) return;
 
-	affectedBody->addForceAtBodyPoint(springMag * spring.norm(), attachmentPoint);
+	affectedBody->addWorldForceAtLocalPoint(springMag * spring.norm(), attachmentPoint);
 }
