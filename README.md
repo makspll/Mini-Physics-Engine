@@ -2,6 +2,7 @@
 A 2D (maybe 3D in the future) Physics engine based on the "Game Physics Engine Development: How to Build a Robust Commercial-Grade Physics Engine for Your Game" Book by Ian Millington
 
 The engine is obviously not meant for production usage, it's a toy I wrote to help me understand how physics engines work!
+I wrote this way back and recently tranasfered the code from dropbox and introduced cmake.
 
 # Features
 - Various Force Generators: Springs, linear forces etc
