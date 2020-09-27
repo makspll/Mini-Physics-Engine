@@ -31,9 +31,9 @@ int main(int argc, char *argv[]) {
 	PhysicsWorld* world = new PhysicsWorld();
 	Vec2d worldCenter = Vec2d(640.0f/2.0,480.0f/2.0);
 
-	// IForceGenerator* spring = new RigidBodyFixedSpring(Vec2d(2,10),worldCenter,2000.0f,10.0f);
+	IForceGenerator* spring = new RigidBodyFixedSpring(Vec2d(0,10),worldCenter,40.0f,10.0f);
 
-	IForceGenerator * gravity = new RigidBodySimpleGravity(Vec2d(0.0f,0.00001f));
+	IForceGenerator * gravity = new RigidBodySimpleGravity(Vec2d(0.0f,9.8f));
 	RigidBody* body = new RigidBody();
 	body->setPos(worldCenter);
 	Polygon a = Polygon();
@@ -47,7 +47,7 @@ int main(int argc, char *argv[]) {
 	body->attachFixture(&abs);
 	world->addObject(body);
 	world->forces.addForceGenerator(body,gravity);
-	// world->forces.addForceGenerator(body,spring);
+	world->forces.addForceGenerator(body,spring);
 	world->setUpSimulation();
 
 	std::cout  <<  abs << body;
@@ -69,7 +69,6 @@ int main(int argc, char *argv[]) {
 		world->stepSimulation(std::chrono::duration_cast<std::chrono::duration<double>>(duration).count());
 
 		//std::cout << std::chrono::duration_cast<std::chrono::duration<double>>(duration).count() << "\n";
-		std::cout << body->getPos();
 	}
 
 	return 0;

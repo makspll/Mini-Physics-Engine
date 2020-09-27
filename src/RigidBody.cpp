@@ -48,12 +48,14 @@ void RigidBody::integrate(real timeDelta)
 	//inherent acceleration on object
 	//we don't add acceleration and then clear it, 
 	//we just clear forces instead 
+	acc += forceAccum * inverseMass;
+	angAcc += torqueAccum * inverseInertia;
 
 	// linear
 	pos += vel * timeDelta;
 
 
-	vel += (acc + (forceAccum  * inverseMass)) * timeDelta;
+	vel += (acc) * timeDelta;
 	
 
 	// angular
@@ -61,12 +63,13 @@ void RigidBody::integrate(real timeDelta)
 	//normalise to range (pi,-pi]
 	ang = clampAngRad(ang);
 
-	angVel += (angAcc + (torqueAccum * inverseInertia) ) * timeDelta;
+	angVel += (angAcc) * timeDelta;
 
 
 	// impose drag (temporary)
 	vel = vel * powf(linearDamping,timeDelta);
 	angVel = angVel * powf(angularDamping,timeDelta);
+
 
 
 	//clear all forces
