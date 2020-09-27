@@ -18,6 +18,7 @@ Fixture::~Fixture()
 	delete shape;
 }
 
+
 void Fixture::set(IShape * newShape, real density)
 {
 	//delete old shape

@@ -49,6 +49,8 @@ Describes the physical 2d represenration of a rigid body
 		*/
 		std::vector<Vec2d> getVerts(const Mat3x3 & transform) const;
 
+
+
 		/*
 		returns inverse mass of fixture
 		*/

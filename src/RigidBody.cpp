@@ -1,6 +1,7 @@
 #pragma once
 #include "RigidBody.h"
 #include "Utility.h"
+#include <allegro5/allegro_primitives.h>    
 
 using namespace phy;
 
@@ -245,6 +246,22 @@ real RigidBody::getAng() const
 {
 	return ang;
 }
+
+void RigidBody::draw(){
+	// draw each fixture
+	for(int i =0; i < fixtures.size();i++){
+		// get the positions of each vertex 
+		std::vector<Vec2d> verts = fixtures[i]->getVerts(transform);
+		
+		for(int j =0; j< verts.size();j++){
+			real x1 = verts[j].x();
+			real y1 = verts[j].y();
+			real x2 = verts[(j + 1) % verts.size()].x();
+			real y2 = verts[(j + 1) % verts.size()].y();
+			al_draw_line(x1,y1,x2,y2,al_map_rgb(0,255,0),2.0f);
+		}
+	}
+};
 
 void RigidBody::printDebug()
 {

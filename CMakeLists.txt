@@ -14,12 +14,12 @@ set(SRC_PATH "${PROJECT_SOURCE_DIR}/src")
 include_directories(${SRC_PATH})
 file(GLOB SRCFILES ${SRC_PATH}/*.cpp)
 
+
+
 add_executable(${MAIN_TARGET}
 		${SRCFILES})
-
+		
 find_package(Armadillo REQUIRED)
-include_directories(${ARMADILLO_INCLUDE_DIRS})
-target_link_libraries(${MAIN_TARGET} ${ARMADILLO_LIBRARIES})
 
 if(ARMADILLO_FOUND)
 	target_include_directories(${MAIN_TARGET} PRIVATE ${ARMADILLO_INCLUDE_DIRS})
@@ -27,5 +27,16 @@ if(ARMADILLO_FOUND)
 else()
 	message(FATAL_ERROR "Could not find the armadillo library")
 endif()
+
+
+find_package(allegro 5.1 COMPONENTS main image primative color)
+
+if(ALLEGRO_FOUND)
+	include_directories(${ALLEGRO_INCLUDE_DIRS})
+	target_link_libraries(${MAIN_TARGET} ${ALLEGRO_LIBRARIES})
+else()
+	message(FATAL_ERROR "Could not find the allegro library")
+endif()
+
 
 

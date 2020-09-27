@@ -34,6 +34,8 @@ namespace phy {
 		prints to stream
 		*/
 		void print(std::ostream& where) const;
+
+
 	protected:
 		/*
 		calculate a tight fitting AABB bounding volume and write

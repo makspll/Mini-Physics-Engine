@@ -105,6 +105,11 @@ namespace phy {
 		void setAcc(const real inX,const real inY);
 		Vec2d getAcc()const;
 
+		/*
+		draw the body to currently initialized allegro display
+		*/
+		void draw();
+
 
 	protected:
 		void calculateTransform();
